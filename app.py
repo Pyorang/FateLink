@@ -608,6 +608,14 @@ st.markdown("""
         color: #ffffff !important;
     }
 
+    .stRadio label span, .stRadio div[role="radiogroup"] label,
+    .stRadio div[role="radiogroup"] p,
+    .stSelectbox div[data-baseweb="select"] span,
+    .stSelectbox option,
+    .stRadio p, .stMarkdown p {
+        color: #ffffff !important;
+    }
+
     /* ── 스크롤바 ── */
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: #0a0a0f; }

@@ -600,7 +600,12 @@ st.markdown("""
         background: rgba(16, 16, 28, 0.8) !important;
         border: 1px solid rgba(177, 74, 237, 0.2) !important;
         border-radius: 12px !important;
-        color: #e0dce8 !important;
+        color: #ffffff !important;
+    }
+
+    .stTextInput label, .stDateInput label,
+    .stSelectbox label, .stRadio label {
+        color: #ffffff !important;
     }
 
     /* ── 스크롤바 ── */

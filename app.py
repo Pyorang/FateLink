@@ -775,7 +775,8 @@ def call_gemini(user_data: dict) -> dict:
     "spouse_profile": {{
         "mbti": "배우자 예측 MBTI",
         "attachment_type": "배우자 예측 애착유형",
-        "age_range": "배우자 예상 나이대 (1살 차이 범위로 좁게 예측. 예: '26~27세', '30~31세'. 반드시 최솟값과 최댓값 차이가 1이어야 함)",
+        "best_age": "사주 오행과 용신을 기반으로 가장 인연이 강한 배우자의 나이를 정수 1개로 예측 (예: 27). 사용자의 사주팔자에서 배우자궁과 인연의 시기를 분석하여 결정할 것.",
+        "age_range": "best_age에서 ±1세 범위를 문자열로 작성 (예: best_age가 27이면 '26~28세')",
         "jobs": "배우자 예측 직업군 (한 가지로 한정짓지 말고 2~3가지 가능성 제시. 예: '스타트업 기획자, UX 디자이너, 또는 프리랜서 작가 계열')",
         "appearance": "외형 특징 (키, 체형, 헤어스타일, 인상, 분위기 등 상세하게 3~4문장)",
         "personality": "성격 특징 (어떤 성격인지 구체적으로 3~4문장. 예: '평소엔 조용한데 친한 사람 앞에서는 말 많아지는 타입. 감정 표현은 서툴지만 행동으로 보여주는 스타일.')",
@@ -817,28 +818,36 @@ def call_gemini(user_data: dict) -> dict:
     return json.loads(text)
 
 
-def generate_spouse_image(appearance_prompt: str, gender: str, birth_date: str) -> bytes | None:
+def generate_spouse_image(appearance_prompt: str, gender: str, best_age: int) -> bytes | None:
     """Gemini 이미지 생성 (배우자 외형)"""
     try:
         client = genai.Client(api_key=st.secrets["GEMINI_API_KEY"])
 
-        # 나이 계산
-        birth = date.fromisoformat(birth_date)
-        today = date.today()
-        user_age = today.year - birth.year - ((today.month, today.day) < (birth.month, birth.day))
-        # 배우자 예상 나이대: 사용자 나이 ±3세 범위
-        spouse_age_min = user_age - 3
-        spouse_age_max = user_age + 3
-        spouse_age_range = f"{spouse_age_min}-{spouse_age_max}"
-
-        opposite = "여성" if gender == "남성" else "남성"
         opposite_en = "woman" if gender == "남성" else "man"
+        attractive = "beautiful" if gender == "남성" else "handsome"
+
+        # 나이대별 자연스러운 분위기 묘사
+        if best_age <= 22:
+            age_vibe = "fresh-faced college student vibe, youthful and bright skin, casual campus style"
+        elif best_age <= 25:
+            age_vibe = "early twenties young adult, fresh and energetic look, trendy casual outfit"
+        elif best_age <= 29:
+            age_vibe = "late twenties, youthful yet mature look, stylish everyday fashion"
+        elif best_age <= 34:
+            age_vibe = "early thirties, confident and polished appearance, smart casual style"
+        elif best_age <= 39:
+            age_vibe = "late thirties, elegant and refined look, sophisticated daily outfit"
+        else:
+            age_vibe = "mature and dignified appearance, classic and timeless style"
 
         full_prompt = (
-            f"A photorealistic portrait of a Korean {opposite_en} "
-            f"in their {spouse_age_range} years old, "
+            f"A candid photo of a {attractive} Korean {opposite_en}, "
+            f"exactly {best_age} years old, {age_vibe}, "
             f"{appearance_prompt} "
-            f"Soft warm lighting, gentle expression, natural background. "
+            f"Shot in a natural everyday setting like a cafe or sunny street, "
+            f"relaxed and natural pose as if taken by a friend, "
+            f"natural soft lighting, no filters, no heavy makeup, "
+            f"realistic and not AI-generated looking. "
             f"Do not include any text in the image."
         )
 
@@ -1088,7 +1097,7 @@ def render_result():
             st.session_state.spouse_image = generate_spouse_image(
                 spouse.get("appearance_prompt", ""),
                 st.session_state.user_data["gender"],
-                st.session_state.user_data["birth_date"],
+                spouse.get("best_age", 27),
             )
 
     result = st.session_state.result
@@ -1254,7 +1263,7 @@ def render_result():
     st.markdown(f"""
     <div class="profile-card-new">
         <div class="profile-detail">
-            <div class="row"><span class="label">🎂 나이</span><span class="value">{spouse.get('age_range', '')}</span></div>
+            <div class="row"><span class="label">🎂 나이</span><span class="value">{spouse.get('best_age', 27) - 1}~{spouse.get('best_age', 27) + 1}세</span></div>
             <div class="row"><span class="label">🧠 MBTI</span><span class="value">{spouse['mbti']}</span></div>
             <div class="row"><span class="label">💕 애착</span><span class="value">{spouse['attachment_type']}</span></div>
             <div class="row"><span class="label">💼 직업</span><span class="value">{spouse.get('jobs', spouse.get('job', ''))}</span></div>

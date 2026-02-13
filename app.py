@@ -56,7 +56,7 @@ st.markdown("""
     /* ── 기본 리셋 ── */
     .stApp {
         background: #0a0a0f;
-        color: #e0dce8;
+        color: #ffffff;
         font-family: 'Noto Sans KR', sans-serif;
     }
     .stApp [data-testid="stHeader"] { background: transparent !important; }
@@ -422,7 +422,7 @@ st.markdown("""
     }
     .profile-detail .row .value {
         font-size: 1rem;
-        color: #e0dce8;
+        color: #ffffff;
     }
 
     /* ── 키워드 태그 뱃지 ── */

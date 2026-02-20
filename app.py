@@ -824,29 +824,30 @@ def generate_spouse_image(appearance_prompt: str, gender: str, best_age: int) ->
         client = genai.Client(api_key=st.secrets["GEMINI_API_KEY"])
 
         opposite_en = "woman" if gender == "남성" else "man"
-        attractive = "beautiful" if gender == "남성" else "handsome"
+        attractive = "very attractive, photogenic beautiful" if gender == "남성" else "very attractive, photogenic handsome"
 
         # 나이대별 자연스러운 분위기 묘사
         if best_age <= 22:
-            age_vibe = "fresh-faced college student vibe, youthful and bright skin, casual campus style"
+            age_vibe = "fresh-faced college student vibe, bright glowing skin, trendy Korean campus fashion, naturally photogenic"
         elif best_age <= 25:
-            age_vibe = "early twenties young adult, fresh and energetic look, trendy casual outfit"
+            age_vibe = "early twenties young adult, sharp and clean features, stylish casual outfit, looks like a K-drama extra"
         elif best_age <= 29:
-            age_vibe = "late twenties, youthful yet mature look, stylish everyday fashion"
+            age_vibe = "late twenties, youthful yet mature charm, well-groomed, effortlessly stylish everyday look"
         elif best_age <= 34:
-            age_vibe = "early thirties, confident and polished appearance, smart casual style"
+            age_vibe = "early thirties, confident and polished appearance, refined casual style, naturally charismatic aura"
         elif best_age <= 39:
-            age_vibe = "late thirties, elegant and refined look, sophisticated daily outfit"
+            age_vibe = "late thirties, elegant and well-maintained look, sophisticated daily outfit, aging gracefully"
         else:
-            age_vibe = "mature and dignified appearance, classic and timeless style"
+            age_vibe = "mature and dignified appearance, classic and timeless style, warm distinguished presence"
 
         full_prompt = (
-            f"A candid photo of a {attractive} Korean {opposite_en}, "
+            f"A candid portrait photo of a {attractive} Korean {opposite_en}, "
             f"exactly {best_age} years old, {age_vibe}, "
             f"{appearance_prompt} "
             f"Shot in a natural everyday setting like a cafe or sunny street, "
-            f"relaxed and natural pose as if taken by a friend, "
-            f"natural soft lighting, no filters, no heavy makeup, "
+            f"relaxed and natural pose but slightly aware of camera, "
+            f"soft natural lighting with gentle bokeh background, "
+            f"minimal natural makeup, clear skin, "
             f"realistic and not AI-generated looking. "
             f"Do not include any text in the image."
         )
